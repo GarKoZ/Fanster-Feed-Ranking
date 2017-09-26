@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+
+### Workspace Utilities Container ###########################
+    elasticsearch:
+        image: elasticsearch:1.7-alpine
+        volumes:
+        - "./elasticsearch/data/elastic:/usr/share/elasticsearch/data"
+        - "./elasticsearch/config/elasticsearch:/usr/share/elasticsearch/config"
+        ports:
+        - "9200:9200"
+
+    search-front:
+        image: registry.thinknet.co.th/sredev/nodejs:boron
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/usr/src/app/
+   
+### Add more Containers below ###############################
+# use [ docker network create microservicenetwork ] เพื่อสร้าง mapmagiccloud(your network name้) network ขึ้นมาก่อน
+networks:
+    default:
+        external:
+            name: microservicenetwork
