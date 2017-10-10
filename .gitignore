@@ -1,0 +1,3 @@
+*.json
+elasticsearch/*
+node_modules/*
