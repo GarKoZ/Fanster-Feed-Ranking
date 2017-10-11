@@ -6,6 +6,7 @@ Fanster is an artist social network application available in [Andriod](https://p
 
 2. [Modelling](https://docs.google.com/presentation/d/1qhYOCGalQ21DjDm46Pg3KwdZ2aYBiJvMRF2o0e0gV-M/edit?usp=drive_web)
 
+3. [Evaluation (N/A)]()
 
 ### Prerequisite
 
