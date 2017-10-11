@@ -29,14 +29,15 @@ node --version
 
 ### SETUP Instruction
 
-1. copy `jobs.csv` from <code>smb://file07/engineering/engineer/Big-Data/Jobs.csv</code> to the same path as this `readme.md` file
+1. Download [csv_utf8_csv_utf8_application_txn.csv](https://storage.cloud.google.com/hackathon_cafe/csv/utf8/csv_utf8_application_txn.csv?_ga=2.138562608.-2027922919.1503365119) , [csv_utf8_artist.csv](https://storage.cloud.google.com/hackathon_cafe/csv/utf8/artist.csv?_ga=2.218852122.-2027922919.1503365119) and [csv_utf8_feed.csv](https://storage.cloud.google.com/hackathon_cafe/csv/utf8/feed.csv?_ga=2.143289014.-2027922919.1503365119) (need priviledge) to the same path as this `readme.md` file
 2. `docker-compose up` to run 2 images React Front-end and ElasticSearch instance
 3. if installed successfully try http://localhost:3000/ for React Frontend
 4. if installed successfully try http://localhost:9200/ for ElasticSearch instance
 5. install all dependancy for Mapping_script by running `npm install`
-6. create elasticsearch mapping by running `node create-mapping.js` scripts in mapping_script/ 
-7. put data into the index by `node push-data.js` scripts in mapping_script/ (this script read jobs.csv and bulk put to elasticsearch) This step should take longer than 5 minuites. 
-8. from console, using these command to get tf-idf 
+6. reformat UserInteractionData by running `node parseUserArtistIntact.js` (taking quite long time)
+7. create elasticsearch mapping by running `node create-mapping.js` scripts in mapping_script/ 
+8. put data into the index by `node push-data.js` scripts in mapping_script/ (this script read jobs.csv and bulk put to elasticsearch) This step should take longer than 5 minuites. 
+9. try the ranking from `http://localhost:3000/`
 
 
 
