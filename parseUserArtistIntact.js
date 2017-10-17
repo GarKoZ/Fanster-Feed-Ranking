@@ -10,45 +10,73 @@ var putData = [];
 var schema;
 var artist = {};
 var count = 0
-fs.createReadStream("csv_utf8_csv_utf8_application_txn.csv")
-.pipe(parse({delimiter: ','}))
-.on('data', function(csvrow) {
-    if (firstRow){
-        firstRow = false;
-        console.log(csvrow)
-    }
-    else{
-        //console.log(csvrow)
-        userid = csvrow[0]
-        artistid = csvrow[6]
-        if (artistid != ""){
-            console.log(userid)
-            console.log(" + ")
-            console.log(artistid)
-            if (typeof artist[userid] == 'undefined'){
-                artist[userid] = {}
-            }
+var MongoClient = require('mongodb').MongoClient;
+const util = require('util')
 
-            
-            if (typeof artist[userid][artistid] == 'undefined'){
-                artist[userid][artistid] = 1
-            }
-            else{
-                artist[userid][artistid] += 1
-            }
-            console.log(artist)
-            console.log(Object.keys(artist).length)
-            
-            console.log(count)
-            count += 1
-            if (count % 1000 == 0 ){
-                pushFeed()
-            }
-        }
+
+MongoClient.connect("mongodb://localhost:27017/UserArtistIntact", function(err, db) {
+    if(!err) {
+      console.log("We are connected");
     }
-}).on('end', function(){
-   pushFeed()
-})
+    db.createCollection("userArtistIntact");
+
+    fs.createReadStream("a01_userid_artistid_from_txn_7_8.csv")
+    .pipe(parse({delimiter: ','}))
+    .on('data', function(csvrow) {
+        if (firstRow){
+            firstRow = false;
+            console.log(csvrow)
+        }
+        else{
+            //console.log(csvrow)
+            userid = csvrow[0]
+            artistid = csvrow[1]
+            console.log(count + " : " + userid + " , " + artistid)
+            count += 1
+            
+            var collection = db.collection('userArtistIntact');
+            collection.find({userid}).toArray(function(err, items) {
+                if (err)
+                    console.log(err)
+                if (artistid != ""){    
+                    if(items.length > 0){
+                        item = items[0]
+                        //console.log(item['artistidList'])
+                            var found = false;
+                            item['artistidList'].forEach(function(element) {
+                                if(element["artistid"] == artistid){
+                                    element["interact"] += 1
+                                    found = true;
+                                    console.log("found")
+                                }
+                            }, this);
+
+                            if (!found){
+                                //console.log("not found")
+                                item['artistidList'].push({artistid:artistid, interact:1})
+                            }
+                                
+                            /*if (artistid in item['artistidList']){
+                                item['artistidList'][artistid] += 1
+                                console.log("here")
+                            }
+                            else 
+                                item['artistidList'][artistid] = 1
+                                */
+                        //console.log(item['artistidList'])
+                            collection.update({userid}, {$set:{artistidList:item['artistidList']}})
+                    }
+                    else{
+                        //console.log("insert")
+                        collection.insertOne({userid, artistidList : [{artistid:artistid, interact : 1}]})
+                    }
+                }
+            })
+        }
+    }).on('end', function(){
+    console.log("end already")
+    })
+});
 
 function pushFeed(){
     var jsonData = JSON.stringify(artist);
